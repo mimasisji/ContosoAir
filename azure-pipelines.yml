@@ -12,7 +12,16 @@ steps:
       npm test
     displayName: 'Run unit tests'
     continueOnError: true
-  - task: PublishTestResults@2
+  - script: |
+      if [ -f $(System.DefaultWorkingDirectory)/test-report.xml ]; then
+        echo "Test report found."
+      else
+        echo "Test report not found. Skipping test results publishing."
+        exit 0
+      fi
+    displayName: 'Check test report file'
+    condition: succeededOrFailed()
+  - task: PublishTestResults@1
     displayName: 'Publish Test Results'
     condition: succeededOrFailed()
     inputs:
